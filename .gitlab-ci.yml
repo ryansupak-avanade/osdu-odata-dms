@@ -1,0 +1,37 @@
+variables:
+  AWS_BUILD_SUBDIR: provider/odata-dms-aws/build-aws
+  AWS_TEST_SUBDIR: testing/odata-dms-test-aws
+  AWS_SERVICE: odata-dms
+  AWS_ENVIRONMENT: dev
+  AWS_DEPLOY_TARGET: EKS
+  AWS_EKS_DEPLOYMENT_NAME: os-odata-dms
+  IBM_BUILD_SUBDIR: provider/odata-dms-ibm
+
+include:
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "standard-setup.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "build/maven.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/fossa-maven.yml"
+
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'cloud-providers/aws-global.yml'
+
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'cloud-providers/aws-maven.yml'
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/ibm-deploy-only.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/gitlab-ultimate.yml"
+
+# disable the eslint scanner
+# I think this is being generated from the presence of an HTML file, but there
+# is no javascript to scan, so the job isn't helpful and just gets in the way
+eslint-sast:
+  rules:
+    - when: never
